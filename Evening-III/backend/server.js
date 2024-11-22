@@ -1,10 +1,12 @@
-import express from 'express'
+ import express from 'express'
 import mongoose from 'mongoose'
 import messageModel from './models/message.model.js'
+import cors from 'cors'
 
 
 const app=express()
 app.use(express.json())
+app.use(cors())
 
 // Function to connect MongoDB
 const connectDataBase=async(req,res)=>{
@@ -67,6 +69,17 @@ app.put('/api/blog/update/:id',async(req,res)=>{
 app.get('/api/allblogs',async(req,res)=>{
     try {
         const blogs=await messageModel.find({})
+        res.send({success:true,blogs:blogs})
+    } catch (error) {
+        res.send({success:false,message:"Blogs not found"})
+        
+    }
+})
+
+app.get('/api/blog/:id',async(req,res)=>{
+    const {id}=req.params
+    try {
+        const blogs=await messageModel.findById(id)
         res.send({success:true,blogs:blogs})
     } catch (error) {
         res.send({success:false,message:"Blogs not found"})
